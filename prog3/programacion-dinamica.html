@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Programación dinámica · Programación 3</title><meta name="description" content="Se descompone el problema en subproblemas que se solapan (a diferencia de divide y vencerás) y se construye la solución de menor a mayor, gu">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📐</text></svg>">
+<link rel="stylesheet" href="../assets/style.css"></head><body><header class="top"><a class="brand" href="../index.html">Apuntes FING</a><nav aria-label="Principal"><a href="../index.html">Materias</a><a href="../prog3/inicio-prog3.html" class=cur>Programación 3</a><button id="th" type="button">Tema</button></nav></header><div class="wrap"><nav class="side" aria-label="Temas"><h1><a href="inicio-prog3.html" style="color:inherit;text-decoration:none">Programación 3</a></h1><ul><li><a href="complejidades.html">Complejidades de un vistazo</a></li><li><a href="emparejamiento-estable.html">Emparejamiento estable</a></li><li><a href="analisis-de-algoritmos.html">Análisis de algoritmos</a></li><li><a href="grafos.html">Grafos</a></li><li><a href="greedy.html">Greedy</a></li><li><a href="divide-y-venceras.html">Divide y vencerás</a></li><li><a href="programacion-dinamica.html" class=cur>Programación dinámica</a></li><li><a href="redes-de-flujo.html">Redes de flujo</a></li><li><a href="intratabilidad.html">Intratabilidad</a></li></ul><h4>En esta página</h4><ul class="sub"><li><a href="#s1">Intervalos ponderados</a></li><li><a href="#s2">Mínimos cuadrados segmentados</a></li><li><a href="#s3">Mochila y Subset Sum</a></li><li><a href="#s4">Estructura secundaria de ARN</a></li><li><a href="#s5">Alineación de secuencias</a></li></ul></nav><main><div class="crumb"><a href="../index.html">Materias</a> / <a href="inicio-prog3.html">Programación 3</a> / Programación dinámica</div><div class="note"><strong>Material de estudio no oficial.</strong> Puede tener errores. Ante la duda, consultar la bibliografía del curso o a un docente.</div><section>
+<h1 class="t">6. Programación dinámica</h1>
+<p>Se descompone el problema en subproblemas <em>que se solapan</em> (a diferencia de divide y vencerás) y se construye la solución de menor a mayor, guardando resultados. Requiere:</p>
+<ol>
+<li>Solo una cantidad polinomial de subproblemas.</li>
+<li>La solución original se obtiene fácil a partir de las de los subproblemas.</li>
+<li>Un orden natural de más chico a más grande, con una recurrencia fácil de evaluar.</li>
+</ol>
+<p><strong>Memoización:</strong> guardar cada resultado en una tabla para calcularlo una sola vez (consulta en O(1)). Versión iterativa: llenar la tabla de menor a mayor; luego se recorre hacia atrás para reconstruir la solución.</p>
+
+<h3 id="s1">Intervalos ponderados</h3>
+<p>Cada trabajo (s<sub>i</sub>, f<sub>i</sub>, w<sub>i</sub>). Maximizar la ganancia sin solapar (el greedy de la sección 4 no sirve acá). Ordenar por fin; p(j) = mayor i &lt; j compatible con j.</p>
+<pre><code>OPT(0) = 0
+OPT(j) = max{ w_j + OPT(p(j)),  OPT(j-1) }      // j entra o no entra
+
+Solución: i = n; mientras i &gt; 0:
+    si OPT[i] = w_i + OPT[p(i)]: agregar i; i = p(i)   sino: i = i - 1</code></pre>
+
+<h3 id="s2">Mínimos cuadrados segmentados</h3>
+<p>Puntos p₁..p<sub>n</sub> con x₁ &lt; ... &lt; x<sub>n</sub>. Error de una recta y = ax + b: Σ(y<sub>i</sub> − ax<sub>i</sub> − b)². Penalización = C × (cantidad de segmentos) + suma de errores. Es una recurrencia <em>multi-way choice</em>: el último segmento empieza en algún i entre 1 y j.</p>
+<pre><code>OPT(0) = 0
+OPT(j) = min_{1 ≤ i ≤ j} { e_{i,j} + C + OPT(i-1) }</code></pre>
+<p>Calcular todos los e<sub>i,j</sub> cuesta O(n³) (n² pares, O(n) cada uno). El resto es O(n²).</p>
+
+<h3 id="s3">Mochila y Subset Sum</h3>
+<p>n ítems con peso w<sub>i</sub> y valor v<sub>i</sub>, capacidad W. Maximizar el valor con peso total ≤ W. Subset Sum es el caso en que valor = peso. Hace falta una variable extra: la capacidad restante.</p>
+<pre><code>OPT(0, w) = 0   y   OPT(i, 0) = 0
+si w_i &gt; w:   OPT(i, w) = OPT(i-1, w)
+sino:        OPT(i, w) = max{ v_i + OPT(i-1, w - w_i),  OPT(i-1, w) }</code></pre>
+<p>Tabla de (n+1) × (W+1): <strong>O(nW)</strong>. Es <em>pseudo-polinomial</em>: polinomial en n y en el valor de W, pero no en el tamaño de la entrada (W se escribe con log W bits). Impracticable si W es enorme.</p>
+
+<h3 id="s4">Estructura secundaria de ARN</h3>
+<p>Cadena b₁..b<sub>n</sub> sobre {A, C, G, U}. Emparejamiento S de pares (i, j) tal que: (1) j − i &gt; 4; (2) los pares son A-U o C-G; (3) cada base está en a lo sumo un par; (4) sin cruces: no existen (i, j), (k, l) con i &lt; k &lt; j &lt; l. Se usan subproblemas {i..j}.</p>
+<pre><code>OPT(i, j) = 0                si j - i ≤ 4
+OPT(i, j) = max{ OPT(i, j-1),
+                 max_t { 1 + OPT(i, t-1) + OPT(t+1, j-1) } }   // t empareja con j, i ≤ t &lt; j - 4</code></pre>
+<p>Se llena por longitud creciente k = j − i. Tiempo O(n³).</p>
+
+<h3 id="s5">Alineación de secuencias</h3>
+<p>X = x₁..x<sub>m</sub>, Y = y₁..y<sub>n</sub>. Un alineamiento es un emparejamiento sin cruces. Costo: δ por cada posición sin emparejar, α<sub>p,q</sub> por cada par discordante (α<sub>p,p</sub> = 0). En un alineamiento óptimo, ocurre al menos una: (m, n) ∈ M, x<sub>m</sub> sin emparejar, o y<sub>n</sub> sin emparejar.</p>
+<pre><code>OPT(i, 0) = δ·i      OPT(0, j) = δ·j
+OPT(i, j) = min{ α(x_i, y_j) + OPT(i-1, j-1),  δ + OPT(i-1, j),  δ + OPT(i, j-1) }</code></pre>
+</section><div class="pn"><a href="divide-y-venceras.html"><small>Anterior</small>Divide y vencerás</a><a class="n" href="redes-de-flujo.html"><small>Siguiente</small>Redes de flujo</a></div><footer>Basado en el "Resumen Programación 3" de Matias Alvira (FING, Udelar), con correcciones y reorganización. Material de estudio no oficial.</footer></main></div><script src="../assets/app.js"></script></body></html>

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Emparejamiento estable · Programación 3</title><meta name="description" content="Conjuntos M y W con |M| = |W| = n. Cada elemento ordena a todos los del otro conjunto, sin empates. Un emparejamiento S es perfecto si todos">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📐</text></svg>">
+<link rel="stylesheet" href="../assets/style.css"></head><body><header class="top"><a class="brand" href="../index.html">Apuntes FING</a><nav aria-label="Principal"><a href="../index.html">Materias</a><a href="../prog3/inicio-prog3.html" class=cur>Programación 3</a><button id="th" type="button">Tema</button></nav></header><div class="wrap"><nav class="side" aria-label="Temas"><h1><a href="inicio-prog3.html" style="color:inherit;text-decoration:none">Programación 3</a></h1><ul><li><a href="complejidades.html">Complejidades de un vistazo</a></li><li><a href="emparejamiento-estable.html" class=cur>Emparejamiento estable</a></li><li><a href="analisis-de-algoritmos.html">Análisis de algoritmos</a></li><li><a href="grafos.html">Grafos</a></li><li><a href="greedy.html">Greedy</a></li><li><a href="divide-y-venceras.html">Divide y vencerás</a></li><li><a href="programacion-dinamica.html">Programación dinámica</a></li><li><a href="redes-de-flujo.html">Redes de flujo</a></li><li><a href="intratabilidad.html">Intratabilidad</a></li></ul><h4>En esta página</h4><ul class="sub"><li><a href="#s1">Algoritmo</a></li><li><a href="#s2">Propiedades</a></li><li><a href="#s3">Implementación en Θ(n²)</a></li></ul></nav><main><div class="crumb"><a href="../index.html">Materias</a> / <a href="inicio-prog3.html">Programación 3</a> / Emparejamiento estable</div><div class="note"><strong>Material de estudio no oficial.</strong> Puede tener errores. Ante la duda, consultar la bibliografía del curso o a un docente.</div><section>
+<h1 class="t">1. Emparejamiento estable</h1>
+<p>Conjuntos M y W con |M| = |W| = n. Cada elemento ordena a todos los del otro conjunto, sin empates. Un emparejamiento S es <strong>perfecto</strong> si todos aparecen en exactamente un par.</p>
+<div class="def"><strong>Inestabilidad:</strong> pares (m, w) y (m′, w′) en S tales que m prefiere a w′ sobre w, y w′ prefiere a m sobre m′. S es <strong>estable</strong> si es perfecto y no tiene inestabilidades.</div>
+<h3 id="s1">Algoritmo</h3>
+<pre><code>Gale-Shapley(M, W):
+  todos libres
+  while exista m libre que no se propuso a todas:
+      w = mejor mujer de la lista de m a la que aún no se propuso
+      if w libre:                      emparejar (m, w)
+      else if w prefiere m a m':       emparejar (m, w); m' queda libre
+      else:                            m sigue libre</code></pre>
+<h3 id="s2">Propiedades</h3>
+<ul>
+<li>Una vez emparejada, una w nunca vuelve a estar libre y su pareja solo mejora (según su lista).</li>
+<li>Las mujeres a las que se propone un m solo empeoran (según su lista).</li>
+<li>Termina en a lo sumo n² iteraciones; el resultado es perfecto y estable.</li>
+<li><strong>Pareja válida</strong> de m: w tal que existe un emparejamiento estable con (m, w). <code>best(m)</code> es la mejor válida.</li>
+<li>Quien propone obtiene <code>best(m)</code>; quien recibe obtiene <code>worst(w)</code>. Esto vale sin importar a qué m libre se elija.</li>
+<li>Por eso el algoritmo no devuelve todos los emparejamientos estables.</li>
+</ul>
+<h3 id="s3">Implementación en Θ(n²)</h3>
+<ul>
+<li><code>ManPref[m][i]</code> y <code>WomanPref[w][i]</code>: i-ésima preferencia.</li>
+<li>Lista enlazada de hombres libres (LIFO o FIFO): O(1) para sacar/agregar.</li>
+<li>Arreglo <code>Next[m]</code>: a quién propone la próxima vez.</li>
+<li>Arreglo <code>Current[w]</code>: pareja actual o libre.</li>
+<li><code>Ranking[w][m]</code>: posición de m en la lista de w. Se construye en O(n²) y se consulta en O(1), lo que permite comparar dos hombres en O(1).</li>
+</ul>
+</section><div class="pn"><a href="complejidades.html"><small>Anterior</small>Complejidades de un vistazo</a><a class="n" href="analisis-de-algoritmos.html"><small>Siguiente</small>Análisis de algoritmos</a></div><footer>Basado en el "Resumen Programación 3" de Matias Alvira (FING, Udelar), con correcciones y reorganización. Material de estudio no oficial.</footer></main></div><script src="../assets/app.js"></script></body></html>

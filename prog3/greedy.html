@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Greedy · Programación 3</title><meta name="description" content="Construye la solución en pasos pequeños, con decisiones locales, buscando optimizar un criterio global. El criterio local correcto no es obv">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📐</text></svg>">
+<link rel="stylesheet" href="../assets/style.css"></head><body><header class="top"><a class="brand" href="../index.html">Apuntes FING</a><nav aria-label="Principal"><a href="../index.html">Materias</a><a href="../prog3/inicio-prog3.html" class=cur>Programación 3</a><button id="th" type="button">Tema</button></nav></header><div class="wrap"><nav class="side" aria-label="Temas"><h1><a href="inicio-prog3.html" style="color:inherit;text-decoration:none">Programación 3</a></h1><ul><li><a href="complejidades.html">Complejidades de un vistazo</a></li><li><a href="emparejamiento-estable.html">Emparejamiento estable</a></li><li><a href="analisis-de-algoritmos.html">Análisis de algoritmos</a></li><li><a href="grafos.html">Grafos</a></li><li><a href="greedy.html" class=cur>Greedy</a></li><li><a href="divide-y-venceras.html">Divide y vencerás</a></li><li><a href="programacion-dinamica.html">Programación dinámica</a></li><li><a href="redes-de-flujo.html">Redes de flujo</a></li><li><a href="intratabilidad.html">Intratabilidad</a></li></ul><h4>En esta página</h4><ul class="sub"><li><a href="#s1">Cómo se prueba</a></li><li><a href="#s2">Planificación de intervalos</a></li><li><a href="#s3">Minimizar tardanza</a></li><li><a href="#s4">Camino mínimo: Dijkstra</a></li><li><a href="#s5">Árbol de recubrimiento mínimo (MST)</a></li></ul></nav><main><div class="crumb"><a href="../index.html">Materias</a> / <a href="inicio-prog3.html">Programación 3</a> / Greedy</div><div class="note"><strong>Material de estudio no oficial.</strong> Puede tener errores. Ante la duda, consultar la bibliografía del curso o a un docente.</div><section>
+<h1 class="t">4. Greedy</h1>
+<p>Construye la solución en pasos pequeños, con decisiones locales, buscando optimizar un criterio global. El criterio local correcto no es obvio: varios criterios plausibles fallan.</p>
+<h3 id="s1">Cómo se prueba</h3>
+<ul>
+<li><strong>Stays Ahead:</strong> mostrar que, paso a paso, la solución del algoritmo es al menos tan buena como la de una óptima cualquiera. Natural cuando no sabemos de antemano si las soluciones tienen el mismo tamaño.</li>
+<li><strong>Exchange Argument:</strong> partir de una óptima y transformarla gradualmente, sin empeorarla, hasta llegar a la del algoritmo. Natural cuando ambas tienen los mismos elementos y solo cambia el orden.</li>
+</ul>
+<h3 id="s2">Planificación de intervalos</h3>
+<p>Elegir el mayor conjunto de solicitudes compatibles (sin solapamiento). Ordenar por tiempo de comienzo o por duración <em>falla</em>. Funciona ordenar por <strong>fin creciente</strong>.</p>
+<pre><code>A = ∅
+ordenar R por f(i) creciente
+while R ≠ ∅:
+    tomar el primer i de R; A += i
+    eliminar de R i y todos los que se solapan con i</code></pre>
+<p><em>Prueba (Stays Ahead).</em> Sean A = {i₁..i<sub>k</sub>} y O = {j₁..j<sub>m</sub>} óptima. Por inducción, f(i<sub>r</sub>) ≤ f(j<sub>r</sub>) para todo r ≤ k. Si m &gt; k, existiría j<sub>k+1</sub> que empieza después de f(j<sub>k</sub>) ≥ f(i<sub>k</sub>), por lo que sería compatible con i<sub>k</sub> y seguiría en R: contradicción. Entonces m = k.</p>
+<h3 id="s3">Minimizar tardanza</h3>
+<p>Cada solicitud i tiene duración t<sub>i</sub> y fecha límite d<sub>i</sub>. Tardanza: l<sub>i</sub> = f(i) − d<sub>i</sub>. Criterio: ordenar por <strong>fecha límite creciente</strong>. Prueba por Exchange Argument: si una óptima tiene una inversión (consecutivas i, j con d<sub>j</sub> ≤ d<sub>i</sub> pero i antes que j), intercambiarlas no aumenta la tardanza máxima. Como hay finitas inversiones, se llega al orden del algoritmo.</p>
+<h3 id="s4">Camino mínimo: Dijkstra</h3>
+<p>Aristas con costo l<sub>e</sub> ≥ 0 (con costos negativos puede fallar).</p>
+<pre><code>S = {s}; d(s) = 0
+while S ≠ V:
+    entre las aristas (u, v) con u ∈ S, v ∉ S, elegir la que minimice d(u) + l_e
+    S += v; d(v) = d(u) + l_e; prev[v] = u</code></pre>
+<p><em>Idea de la prueba (inducción en |S|).</em> Para v agregado vía (u, v), cualquier otro camino P a v debe salir de S por alguna arista (x, y). El algoritmo ya consideró y y prefirió v, así que el tramo de P hasta y ya cuesta al menos d(v); como las aristas son no negativas, todo P cuesta al menos eso.</p>
+<p><strong>Implementación:</strong> cola de prioridad con d′(v) como clave; <code>ExtractMin</code> elige el nodo, <code>ChangeKey</code> actualiza vecinos. Total: <strong>O(m log n)</strong>.</p>
+<h3 id="s5">Árbol de recubrimiento mínimo (MST)</h3>
+<p>Dado G conexo con costos c<sub>e</sub> ≥ 0, hallar T ⊆ E conexo de costo mínimo. Necesariamente es un árbol.</p>
+<ul>
+<li><strong>Kruskal:</strong> ordenar aristas por costo creciente; agregar cada una salvo que cree ciclo.</li>
+<li><strong>Prim:</strong> arrancar en s; repetidamente agregar la arista más barata entre S y V − S.</li>
+<li><strong>Reverse-Delete:</strong> partir de E; quitar aristas de mayor a menor costo salvo que desconecten.</li>
+</ul>
+<div class="def"><strong>Propiedad de corte</strong> (costos distintos): si S ≠ ∅, S ≠ V, la arista más barata entre S y V − S pertenece a todo MST.<br><strong>Propiedad del ciclo</strong> (costos distintos): la arista más cara de un ciclo no pertenece a ningún MST.</div>
+<p>Ambas se prueban por intercambio: si el MST no tuviera e (corte), agregar e y sacar una arista más cara del ciclo formado da un árbol de menor costo.</p>
+</section><div class="pn"><a href="grafos.html"><small>Anterior</small>Grafos</a><a class="n" href="divide-y-venceras.html"><small>Siguiente</small>Divide y vencerás</a></div><footer>Basado en el "Resumen Programación 3" de Matias Alvira (FING, Udelar), con correcciones y reorganización. Material de estudio no oficial.</footer></main></div><script src="../assets/app.js"></script></body></html>

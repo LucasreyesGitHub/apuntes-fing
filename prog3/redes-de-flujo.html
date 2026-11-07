@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Redes de flujo · Programación 3</title><meta name="description" content="Tiempo O(mC), con C la suma de las capacidades de las aristas que salen de s (cota para el valor del flujo).">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📐</text></svg>">
+<link rel="stylesheet" href="../assets/style.css"></head><body><header class="top"><a class="brand" href="../index.html">Apuntes FING</a><nav aria-label="Principal"><a href="../index.html">Materias</a><a href="../prog3/inicio-prog3.html" class=cur>Programación 3</a><button id="th" type="button">Tema</button></nav></header><div class="wrap"><nav class="side" aria-label="Temas"><h1><a href="inicio-prog3.html" style="color:inherit;text-decoration:none">Programación 3</a></h1><ul><li><a href="complejidades.html">Complejidades de un vistazo</a></li><li><a href="emparejamiento-estable.html">Emparejamiento estable</a></li><li><a href="analisis-de-algoritmos.html">Análisis de algoritmos</a></li><li><a href="grafos.html">Grafos</a></li><li><a href="greedy.html">Greedy</a></li><li><a href="divide-y-venceras.html">Divide y vencerás</a></li><li><a href="programacion-dinamica.html">Programación dinámica</a></li><li><a href="redes-de-flujo.html" class=cur>Redes de flujo</a></li><li><a href="intratabilidad.html">Intratabilidad</a></li></ul><h4>En esta página</h4><ul class="sub"><li><a href="#s1">Ford-Fulkerson</a></li><li><a href="#s2">Flujo máximo = corte mínimo</a></li></ul></nav><main><div class="crumb"><a href="../index.html">Materias</a> / <a href="inicio-prog3.html">Programación 3</a> / Redes de flujo</div><div class="note"><strong>Material de estudio no oficial.</strong> Puede tener errores. Ante la duda, consultar la bibliografía del curso o a un docente.</div><section>
+<h1 class="t">7. Redes de flujo</h1>
+<ul>
+<li><strong>Red de flujo:</strong> grafo dirigido con capacidades c<sub>e</sub> ≥ 0, un único nodo fuente s y un único sumidero t.</li>
+<li><strong>Flujo s-t:</strong> f: E → ℝ⁺ con (1) 0 ≤ f(e) ≤ c<sub>e</sub> para toda arista y (2) en todo nodo interno, flujo entrante = flujo saliente.</li>
+<li><strong>Grafo residual G<sub>f</sub>:</strong> mismos nodos. Por cada e = (u, v): si f(e) &lt; c<sub>e</sub>, arista <em>forward</em> (u, v) con capacidad c<sub>e</sub> − f(e); si f(e) &gt; 0, arista <em>backward</em> (v, u) con capacidad f(e).</li>
+<li><strong>Cuello de botella</strong> de un camino s-t: mínima capacidad residual de sus aristas.</li>
+</ul>
+<h3 id="s1">Ford-Fulkerson</h3>
+<pre><code>f(e) = 0 para toda e
+while exista camino simple P s-t en G_f:
+    b = cuello de botella de P
+    forward:  f(e) += b        backward: f(e') -= b
+    actualizar G_f</code></pre>
+<p>Tiempo <strong>O(mC)</strong>, con C la suma de las capacidades de las aristas que salen de s (cota para el valor del flujo).</p>
+<h3 id="s2">Flujo máximo = corte mínimo</h3>
+<ul>
+<li>Para todo corte (A, B) s-t: v(f) = f<sup>out</sup>(A) − f<sup>in</sup>(A).</li>
+<li>Para todo corte: v(f) ≤ c(A, B).</li>
+<li>Por lo tanto, el valor máximo de un flujo s-t es igual a la mínima capacidad de un corte s-t.</li>
+</ul>
+</section><div class="pn"><a href="programacion-dinamica.html"><small>Anterior</small>Programación dinámica</a><a class="n" href="intratabilidad.html"><small>Siguiente</small>Intratabilidad</a></div><footer>Basado en el "Resumen Programación 3" de Matias Alvira (FING, Udelar), con correcciones y reorganización. Material de estudio no oficial.</footer></main></div><script src="../assets/app.js"></script></body></html>
